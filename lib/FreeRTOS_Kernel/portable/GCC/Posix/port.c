@@ -71,7 +71,8 @@
 #include "task.h"
 /*-----------------------------------------------------------*/
 
-#define MAX_NUMBER_OF_TASKS (_POSIX_THREAD_THREADS_MAX)
+//#define MAX_NUMBER_OF_TASKS (_POSIX_THREAD_THREADS_MAX)
+#define MAX_NUMBER_OF_TASKS 1024
 /*-----------------------------------------------------------*/
 
 /* Parameters to pass to the newly created pthread. */
