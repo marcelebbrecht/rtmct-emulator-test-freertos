@@ -48,15 +48,6 @@ matrix:
           cat doxygen_warnings.txt
           exit -1
         fi
-    # Generate and deploy documentation
-    deploy:
-        provider: pages
-        skip_cleanup: true
-        local_dir: docs/docs/html
-        github_token: $GH_REPO_TOKEN
-        keep_history: true
-        on:
-            branch: master
 
   #
   # Git Check
