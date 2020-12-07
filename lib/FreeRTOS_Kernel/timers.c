@@ -161,8 +161,19 @@ time order, with the nearest expiry time at the front of the list.  Only the
 timer service task is allowed to access these lists. */
 PRIVILEGED_DATA static List_t xActiveTimerList1;
 PRIVILEGED_DATA static List_t xActiveTimerList2;
+
 PRIVILEGED_DATA static List_t *pxCurrentTimerList;
 PRIVILEGED_DATA static List_t *pxOverflowTimerList;
+
+/* KHCHEN: m ordered lists, i.e., m = max(1, ceiling(log_2(n))-1) and one bucket (list) 
+ * Assumption here is that the number of tasks and the periods are given, so that 
+ * the multiple lists can be created beforehand. .
+ *
+ * To comply the overflow mechanism in FreeRTOS, the number of created lists should be double.
+ * At first, the simplest BOI is implemented.
+ */
+/* PRIVILEGED_DATA static List_t *pxCurrentTimerBucket; */
+/* PRIVILEGED_DATA static List_t *pxOverflowTimerBucket; */
 
 /* A queue that is used to send commands to the timer service task. */
 PRIVILEGED_DATA static QueueHandle_t xTimerQueue = NULL;

@@ -187,7 +187,7 @@ struct xLIST_ITEM {
     void *configLIST_VOLATILE pvContainer;              /*< Pointer to the list in which this list item is placed (if any). */
     listSECOND_LIST_ITEM_INTEGRITY_CHECK_VALUE          /*< Set to a known value if configUSE_LIST_DATA_INTEGRITY_CHECK_BYTES is set to 1. */
 };
-typedef struct xLIST_ITEM ListItem_t;                   /* For some reason lint wants this as two separate definitions. */
+typedef struct xLIST_ITEM ListItem_t;                   /* For some reason list wants this as two separate definitions. */
 
 struct xMINI_LIST_ITEM {
     listFIRST_LIST_ITEM_INTEGRITY_CHECK_VALUE           /*< Set to a known value if configUSE_LIST_DATA_INTEGRITY_CHECK_BYTES is set to 1. */
@@ -263,7 +263,7 @@ typedef struct xLIST {
 #define listGET_HEAD_ENTRY( pxList )    ( ( ( pxList )->xListEnd ).pxNext )
 
 /*
- * Return the list item at the head of the list.
+ * Return the next item of the item.
  *
  * \page listGET_NEXT listGET_NEXT
  * \ingroup LinkedList
@@ -441,6 +441,31 @@ void vListInsertEnd(List_t *const pxList, ListItem_t *const pxNewListItem) PRIVI
  * \ingroup LinkedList
  */
 UBaseType_t uxListRemove(ListItem_t *const pxItemToRemove) PRIVILEGED_FUNCTION;
+
+/* KHCHEN: the following functions are prepared for Bucket of Ignorance for timers */
+
+/* 
+ * A wrapper function to decide if the item is inserted into bucket or list.
+ * We can simply use vListInsertEnd to insert without precise positions to simulate bucket.
+ * To use this function, $m$ + 1 lists are required, i.e., m = max(1, ceil(log_2(n))-1).
+ */
+void vTimerInsert(List_t *const pxList, List_t *const pxBucket, ListItem_t *const pxNewListItem) PRIVILEGED_FUNCTION;
+
+/* Function for refilling List(s) */
+void vTimerRefill(List_t *const pxList, List_t *const pxBucket) PRIVILEGED_FUNCTION;
+
+/* Function for sorting items in Bucket */
+void vSortBucket(List_t *const pxBucket) PRIVILEGED_FUNCTION;
+
+/* Function for merge-sort */
+void vMergeSort(ListItem_t **const pxHeadItem) PRIVILEGED_FUNCTION;
+
+/* Function for sorting items in Bucket */
+ListItem_t* vSortedMerge(ListItem_t *a, ListItem_t *b) PRIVILEGED_FUNCTION;
+
+/* Function for sorting items in Bucket */
+void vFrontBackSplit(ListItem_t *const pxSourceItem, ListItem_t **pxFrontRef, ListItem_t **pxBackRef) PRIVILEGED_FUNCTION;
+
 
 #ifdef __cplusplus
 }

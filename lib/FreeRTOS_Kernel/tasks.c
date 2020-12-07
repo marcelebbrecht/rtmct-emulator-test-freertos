@@ -236,6 +236,7 @@ or suspended list then it won't be in a ready list. */
 
 /* pxDelayedTaskList and pxOverflowDelayedTaskList are switched when the tick
 count overflows. */
+/* KHCHEN: buckets are switched as well */
 #define taskSWITCH_DELAYED_LISTS()                                                                  \
     {                                                                                                   \
         List_t *pxTemp;                                                                                 \
@@ -246,6 +247,9 @@ count overflows. */
         pxTemp = pxDelayedTaskList;                                                                     \
         pxDelayedTaskList = pxOverflowDelayedTaskList;                                                  \
         pxOverflowDelayedTaskList = pxTemp;                                                             \
+        pxTemp = pxDelayedTaskBucket;                                                                   \
+        pxDelayedTaskBucket = pxOverflowDelayedTaskBucket;                                              \
+        pxOverflowDelayedTaskBucket = pxTemp;                                                           \
         xNumOfOverflows++;                                                                              \
         prvResetNextTaskUnblockTime();                                                                  \
     }
@@ -377,6 +381,13 @@ PRIVILEGED_DATA static List_t xDelayedTaskList2;                        /*< Dela
 PRIVILEGED_DATA static List_t *volatile pxDelayedTaskList;              /*< Points to the delayed task list currently being used. */
 PRIVILEGED_DATA static List_t *volatile pxOverflowDelayedTaskList;      /*< Points to the delayed task list currently being used to hold tasks that have overflowed the current tick count. */
 PRIVILEGED_DATA static List_t xPendingReadyList;                        /*< Tasks that have been readied while the scheduler was suspended.  They will be moved to the ready list when the scheduler is resumed. */
+
+/* KHCHEN: the following lists are for BOI */
+PRIVILEGED_DATA static List_t xDelayedTaskBucket1;                        /*< Delayed tasks. */
+PRIVILEGED_DATA static List_t xDelayedTaskBucket2;                        /*< Delayed tasks (two lists are used - one for delays that have overflowed the current tick count. */
+PRIVILEGED_DATA static List_t *volatile pxDelayedTaskBucket;              /*< Points to the delayed task list currently being used. */
+PRIVILEGED_DATA static List_t *volatile pxOverflowDelayedTaskBucket;      /*< Points to the delayed task list currently being used to hold tasks that have overflowed the current tick count. */
+
 
 #if( INCLUDE_vTaskDelete == 1 )
 
@@ -3115,6 +3126,9 @@ static void prvInitialiseTaskLists(void)
     vListInitialise(&xDelayedTaskList2);
     vListInitialise(&xPendingReadyList);
 
+    /* KHCHEN: buckets initialization */
+    vListInitialise(&xDelayedTaskBucket1);
+    vListInitialise(&xDelayedTaskBucket2);
 #if ( INCLUDE_vTaskDelete == 1 )
     {
         vListInitialise(&xTasksWaitingTermination);
@@ -3131,6 +3145,10 @@ static void prvInitialiseTaskLists(void)
     using list2. */
     pxDelayedTaskList = &xDelayedTaskList1;
     pxOverflowDelayedTaskList = &xDelayedTaskList2;
+    
+    /* KHCHEN: prepare pointers for buckets*/
+    pxDelayedTaskBucket = &xDelayedTaskBucket1;
+    pxOverflowDelayedTaskBucket = &xDelayedTaskBucket2;
 }
 /*-----------------------------------------------------------*/
 
@@ -4370,7 +4388,6 @@ static void prvAddCurrentTaskToDelayedList(TickType_t xTicksToWait, const BaseTy
         pxCurrentTCB->ucDelayAborted = pdFALSE;
     }
 #endif
-
     /* Remove the task from the ready list before adding it to the blocked list
     as the same list item is used for both lists. */
     if (uxListRemove(&(pxCurrentTCB->xStateListItem)) == (UBaseType_t) 0) {
@@ -4402,12 +4419,14 @@ static void prvAddCurrentTaskToDelayedList(TickType_t xTicksToWait, const BaseTy
             if (xTimeToWake < xConstTickCount) {
                 /* Wake time has overflowed.  Place this item in the overflow
                 list. */
-                vListInsert(pxOverflowDelayedTaskList, &(pxCurrentTCB->xStateListItem));
+                /* KHCHEN: this need to be fixed */
+                vTimerInsert(pxOverflowDelayedTaskList, pxOverflowDelayedTaskBucket, &(pxCurrentTCB->xStateListItem));
             }
             else {
                 /* The wake time has not overflowed, so the current block list
                 is used. */
-                vListInsert(pxDelayedTaskList, &(pxCurrentTCB->xStateListItem));
+                /* KHCHEN: this is the entry point */
+                vTimerInsert(pxDelayedTaskList, pxDelayedTaskBucket, &(pxCurrentTCB->xStateListItem));
 
                 /* If the task entering the blocked state was placed at the
                 head of the list of blocked tasks then xNextTaskUnblockTime
@@ -4433,10 +4452,12 @@ static void prvAddCurrentTaskToDelayedList(TickType_t xTicksToWait, const BaseTy
 
         if (xTimeToWake < xConstTickCount) {
             /* Wake time has overflowed.  Place this item in the overflow list. */
+            /* KHCHEN: Haven't touched yet */
             vListInsert(pxOverflowDelayedTaskList, &(pxCurrentTCB->xStateListItem));
         }
         else {
             /* The wake time has not overflowed, so the current block list is used. */
+            /* KHCHEN: Haven't touched yet */
             vListInsert(pxDelayedTaskList, &(pxCurrentTCB->xStateListItem));
 
             /* If the task entering the blocked state was placed at the head of the
