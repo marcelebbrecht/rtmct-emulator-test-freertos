@@ -14,7 +14,7 @@ There exists two main branches:
 ## Usage
 
 - Follow build instructions from [original project](https://github.com/alxhoff/FreeRTOS-Emulator)
-- To run simulation you have to pass two arguments: 
+- To run simulation you have to pass two arguments:
  - MODE: 1 to run the scheduler or 0 if not (to estimate overhead of system without running the taskset)
  - TASKSET: relative path to the file containing the taskset
 - Example command: ```FreeRTOS_Emulator 1 taskset.txt```
