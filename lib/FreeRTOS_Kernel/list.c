@@ -67,10 +67,19 @@
     1 tab == 4 spaces!
 */
 
+/* uncomment to print time needed for timer insertion */
+#define TRACE_INSERTS
 
 #include <stdlib.h>
 #include "FreeRTOS.h"
 #include "list.h"
+
+/* Libs used for time measurement */
+#define _XOPEN_SOURCE 500
+#include <time.h>
+#include <stdio.h>
+#include <unistd.h>
+#include <sys/time.h>
 
 /*-----------------------------------------------------------
  * PUBLIC LIST API documented in list.h
@@ -144,6 +153,12 @@ void vListInsertEnd(List_t *const pxList, ListItem_t *const pxNewListItem)
 
 void vListInsert(List_t *const pxList, ListItem_t *const pxNewListItem)
 {
+#ifdef TRACE_INSERTS    
+    /* get start time of timer insertion */
+    struct timespec ts_start;
+    clock_gettime (CLOCK_MONOTONIC, &ts_start);
+#endif
+    
     ListItem_t *pxIterator;
     const TickType_t xValueOfInsertion = pxNewListItem->xItemValue;
 
@@ -203,6 +218,15 @@ void vListInsert(List_t *const pxList, ListItem_t *const pxNewListItem)
     pxNewListItem->pvContainer = (void *) pxList;
 
     (pxList->uxNumberOfItems)++;
+    
+#ifdef TRACE_INSERTS    
+    /* get finish time of timer insertion */
+    struct timespec ts_end;
+    clock_gettime (CLOCK_MONOTONIC, &ts_end);
+    
+    /* save to pointer */
+    prints("INSERTTIMER:%ld\n", (ts_end.tv_nsec - ts_start.tv_nsec));
+#endif  
 }
 /*-----------------------------------------------------------*/
 
