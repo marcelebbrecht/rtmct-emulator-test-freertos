@@ -3,7 +3,7 @@
 
 # FreeRTOS Emulator for RTMCT validation
 
-This is just a copy of the [original project](https://github.com/alxhoff/FreeRTOS-Emulator) to be used as a submodule in the [RTMCT emulator test suite](https://github.com/marcelebbrecht/rtmct-emulator-test) for validating improvements on timer queue management mentionen in the [RTMCT project](https://github.com/marcelebbrecht/rtmct). It imports a taskset from a file provided by command-line.
+This is just a copy of the [original project](https://github.com/alxhoff/FreeRTOS-Emulator) to be used as a submodule in the [RTMCT emulator test suite](https://github.com/marcelebbrecht/rtmct-emulator-test) for validating improvements on timer queue management mentionen in the [RTMCT project](https://github.com/marcelebbrecht/rtmct). It imports a taskset from a file provided by command-line and, if configured, prints the time required for timer insertion to console.
 
 ## Branches
 
@@ -13,6 +13,13 @@ There exists two main branches:
 
 ## Usage
 
+**IMPORTANT:**
+
+There are two defines available:
+- ```#define TRACE_TIMER``` in ```main.c``` - if uncommented, this gives you some general statistics about the executed tasks at the end of the simulation. This is usefull to ensure the correct behaviour of the system.
+- ```#define TRACE_INSERTS``` in ```lib/FreeRTOS_Kernel/list.c``` - if uncommented, every time a timer gets inserted, the amount of time in nanosecond that was needed for this operation gets printed. **It is absolutely crucial to enable this if you want to use the binaries with the ```rtmct-emulator-test``` suite.**
+
+Build instructions:
 - Follow build instructions from [original project](https://github.com/alxhoff/FreeRTOS-Emulator)
 - To run simulation you have to pass two arguments:
  - MODE: 1 to run the scheduler or 0 if not (to estimate overhead of system without running the taskset)
