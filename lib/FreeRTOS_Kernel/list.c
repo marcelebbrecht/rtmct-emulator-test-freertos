@@ -153,12 +153,12 @@ void vListInsertEnd(List_t *const pxList, ListItem_t *const pxNewListItem)
 
 void vListInsert(List_t *const pxList, ListItem_t *const pxNewListItem)
 {
-#ifdef TRACE_INSERTS    
+#ifdef TRACE_INSERTS
     /* get start time of timer insertion */
     struct timespec ts_start;
     clock_gettime (CLOCK_MONOTONIC, &ts_start);
 #endif
-    
+
     ListItem_t *pxIterator;
     const TickType_t xValueOfInsertion = pxNewListItem->xItemValue;
 
@@ -218,15 +218,15 @@ void vListInsert(List_t *const pxList, ListItem_t *const pxNewListItem)
     pxNewListItem->pvContainer = (void *) pxList;
 
     (pxList->uxNumberOfItems)++;
-    
-#ifdef TRACE_INSERTS    
+
+#ifdef TRACE_INSERTS
     /* get finish time of timer insertion */
     struct timespec ts_end;
     clock_gettime (CLOCK_MONOTONIC, &ts_end);
-    
+
     /* save to pointer */
     prints("INSERTTIMER:%ld\n", (ts_end.tv_nsec - ts_start.tv_nsec));
-#endif  
+#endif
 }
 /*-----------------------------------------------------------*/
 
