@@ -67,10 +67,19 @@
     1 tab == 4 spaces!
 */
 
+/* uncomment to print time needed for timer insertion */
+#define TRACE_INSERTS
 
 #include <stdlib.h>
 #include "FreeRTOS.h"
 #include "list.h"
+
+/* Libs used for time measurement */
+#define _XOPEN_SOURCE 500
+#include <time.h>
+#include <stdio.h>
+#include <unistd.h>
+#include <sys/time.h>
 
 /*-----------------------------------------------------------
  * PUBLIC LIST API documented in list.h
@@ -235,6 +244,12 @@ UBaseType_t uxListRemove(ListItem_t *const pxItemToRemove)
 
 void vTimerInsert(List_t *const pxList, List_t *const pxBucket, ListItem_t *const pxNewListItem)
 {
+#ifdef TRACE_INSERTS    
+    /* get start time of timer insertion */
+    struct timespec ts_start;
+    clock_gettime (CLOCK_MONOTONIC, &ts_start);
+#endif
+    
     TickType_t xNextExpireTime;
     /* If the bucket is empty, fill it to let the following procedure work */
     if ( listLIST_IS_EMPTY( pxBucket ) != pdFALSE ) {
@@ -265,6 +280,15 @@ void vTimerInsert(List_t *const pxList, List_t *const pxBucket, ListItem_t *cons
             /* printf("\n"); */
         }
     }
+    
+#ifdef TRACE_INSERTS    
+    /* get finish time of timer insertion */
+    struct timespec ts_end;
+    clock_gettime (CLOCK_MONOTONIC, &ts_end);
+    
+    /* save to pointer */
+    prints("INSERTTIMER:%ld\n", (ts_end.tv_nsec - ts_start.tv_nsec));
+#endif    
 }
 /*-----------------------------------------------------------*/
 
