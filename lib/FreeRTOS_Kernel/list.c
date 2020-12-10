@@ -244,12 +244,12 @@ UBaseType_t uxListRemove(ListItem_t *const pxItemToRemove)
 
 void vTimerInsert(List_t *const pxList, List_t *const pxBucket, ListItem_t *const pxNewListItem)
 {
-#ifdef TRACE_INSERTS    
+#ifdef TRACE_INSERTS
     /* get start time of timer insertion */
     struct timespec ts_start;
     clock_gettime (CLOCK_MONOTONIC, &ts_start);
 #endif
-    
+
     TickType_t xNextExpireTime;
     /* If the bucket is empty, fill it to let the following procedure work */
     if ( listLIST_IS_EMPTY( pxBucket ) != pdFALSE ) {
@@ -281,14 +281,14 @@ void vTimerInsert(List_t *const pxList, List_t *const pxBucket, ListItem_t *cons
         }
     }
     
-#ifdef TRACE_INSERTS    
+#ifdef TRACE_INSERTS
     /* get finish time of timer insertion */
     struct timespec ts_end;
     clock_gettime (CLOCK_MONOTONIC, &ts_end);
-    
+
     /* save to pointer */
     prints("INSERTTIMER:%ld\n", (ts_end.tv_nsec - ts_start.tv_nsec));
-#endif    
+#endif
 }
 /*-----------------------------------------------------------*/
 
