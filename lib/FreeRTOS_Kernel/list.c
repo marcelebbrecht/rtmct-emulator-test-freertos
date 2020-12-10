@@ -286,8 +286,13 @@ void vTimerInsert(List_t *const pxList, List_t *const pxBucket, ListItem_t *cons
     struct timespec ts_end;
     clock_gettime (CLOCK_MONOTONIC, &ts_end);
 
-    /* save to pointer */
-    prints("INSERTTIMER:%ld\n", (ts_end.tv_nsec - ts_start.tv_nsec));
+    /* calculate and print time */
+    if ((ts_end.tv_nsec - ts_start.tv_nsec) < 0) {
+        prints("INSERTTIMER:%ld\n", ((ts_end.tv_nsec - ts_start.tv_nsec) + 1000000000));
+    }
+    else {
+        prints("INSERTTIMER:%ld\n", (ts_end.tv_nsec - ts_start.tv_nsec));
+    }
 #endif
 }
 /*-----------------------------------------------------------*/
