@@ -68,7 +68,8 @@
 */
 
 /* uncomment to print time needed for timer insertion */
-#define TRACE_INSERTS
+#define TRACE_TIMING
+#define TRACE_LABEL "TIME"
 
 #include <stdlib.h>
 #include "FreeRTOS.h"
@@ -153,7 +154,7 @@ void vListInsertEnd(List_t *const pxList, ListItem_t *const pxNewListItem)
 
 void vListInsert(List_t *const pxList, ListItem_t *const pxNewListItem)
 {
-#ifdef TRACE_INSERTS
+#ifdef TRACE_TIMING
     /* get start time of timer insertion */
     struct timespec ts_start;
     clock_gettime (CLOCK_MONOTONIC, &ts_start);
@@ -219,17 +220,17 @@ void vListInsert(List_t *const pxList, ListItem_t *const pxNewListItem)
 
     (pxList->uxNumberOfItems)++;
 
-#ifdef TRACE_INSERTS
+#ifdef TRACE_TIMING
     /* get finish time of timer insertion */
     struct timespec ts_end;
     clock_gettime (CLOCK_MONOTONIC, &ts_end);
 
     /* calculate and print time */
     if ((ts_end.tv_nsec - ts_start.tv_nsec) < 0) {
-        prints("INSERTTIMER:%ld\n", ((ts_end.tv_nsec - ts_start.tv_nsec) + 1000000000));
+        prints("%s:%ld\n", TRACE_LABEL, ((ts_end.tv_nsec - ts_start.tv_nsec) + 1000000000));
     }
     else {
-        prints("INSERTTIMER:%ld\n", (ts_end.tv_nsec - ts_start.tv_nsec));
+        prints("%s:%ld\n", TRACE_LABEL, (ts_end.tv_nsec - ts_start.tv_nsec));
     }
 #endif
 }

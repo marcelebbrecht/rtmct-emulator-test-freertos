@@ -17,7 +17,8 @@ There exists two main branches:
 
 There are two defines available:
 - ```#define TRACE_TIMER``` in ```main.c``` - if uncommented, this gives you some general statistics about the executed tasks at the end of the simulation. This is usefull to ensure the correct behaviour of the system.
-- ```#define TRACE_INSERTS``` in ```lib/FreeRTOS_Kernel/list.c``` - if uncommented, every time a timer gets inserted, the amount of time in nanosecond that was needed for this operation gets printed. **It is absolutely crucial to enable this if you want to use the binaries with the ```rtmct-emulator-test``` suite.**
+- ```#define TRACE_TIMING``` in ```lib/FreeRTOS_Kernel/list.c``` - if uncommented, every time a timer gets inserted, the amount of time in nanosecond that was needed for this operation gets printed. **It is absolutely crucial to enable this if you want to use the binaries with the ```rtmct-emulator-test``` suite.**
+- ```#define TRACE_LABEL``` in ```lib/FreeRTOS_Kernel/list.c``` contains the label that will be used on output. **This must be the same as defined in the ```rtmct-emulator-test``` suite.**
 
 Build instructions:
 - Follow build instructions from [original project](https://github.com/alxhoff/FreeRTOS-Emulator)
