@@ -10,7 +10,7 @@
 
 /* uncomment to print stats for the timers in the end. To get time needed
 for the insertion of one timer item please define TRACE_INSERTS in list.c */
-//#define TRACE_TASKS
+#define TRACE_TASKS
 
 #include <math.h>
 #include <stdio.h>
